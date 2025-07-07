@@ -5,6 +5,8 @@
 #include "ServiceMngr.hpp"
 #include "Singleton.hpp"
 #include "SpiffsManager.h"
+#include "WiFiConfig.h"
+
 
 static const char* TAG = "ServiceMngr";
 TaskHandle_t ServiceMngr::SrvMngHandle = nullptr;
@@ -34,6 +36,7 @@ ServiceMngr::ServiceMngr(
     nvsFlashInit();
 
     SpiffsInit();
+    WiFi_InitStation("xxxxx", "xxxxx", &IsWifiConnectedSemaphore);
 
     SharedBus sharedBus;
     if(sharedBus.Init() == ESP_OK)
