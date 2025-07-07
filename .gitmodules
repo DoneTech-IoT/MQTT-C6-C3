@@ -1,6 +1,6 @@
 [submodule "MQTTS"]
-	path = MQTTS
+	path = components/MQTTS
 	url = git@github.com:DoneTech-IoT/MQTTS.git
 [submodule "Utilities"]
-	path = Utilities
+	path = components/Utilities
 	url = git@github.com:DoneTech-IoT/Utilities.git
