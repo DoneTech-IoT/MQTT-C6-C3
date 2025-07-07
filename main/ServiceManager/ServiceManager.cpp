@@ -9,14 +9,14 @@
 #ifdef CONFIG_DONE_COMPONENT_MATTER
 #include "MatterInterface.h"
 #else
-#include "esp_netif.h"
-#include "protocol_examples_common.h"
+// #include "esp_netif.h"
+// #include "protocol_examples_common.h"
 #endif
 #ifdef CONFIG_DONE_LOG
 #include "Custom_Log.h"
 #endif
 #ifdef CONFIG_DONE_COMPONENT_MQTT
-#include "MQTT_Interface.h"
+// #include "MQTT_Interface.h"
 #endif
 
 // ****************************** Local Variables

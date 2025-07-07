@@ -26,6 +26,8 @@ std::shared_ptr<MQTTCoffeeMaker> ServiceMngr::mqttCoffeeMakerApp;
 
 #include "esp_heap_caps.h"
 
+SemaphoreHandle_t IsWifiConnectedSemaphore = NULL;
+
 ServiceMngr::ServiceMngr(
     const char *TaskName,
     const SharedBus::ServiceID &ServiceID) :
@@ -38,6 +40,13 @@ ServiceMngr::ServiceMngr(
     SpiffsInit();
     WiFi_InitStation("xxxxx", "xxxxx", &IsWifiConnectedSemaphore);
 
+    IsWifiConnectedSemaphore = xSemaphoreCreateBinary();
+
+    if (xSemaphoreTake(IsWifiConnectedSemaphore, portMAX_DELAY) != pdTRUE)
+    {
+        ESP_LOGE(TAG, "Failed to connect to Wi-Fi");
+        // gpio_set_level(GPIO_LED_RED, RGB_LED_ON);
+    }
     SharedBus sharedBus;
     if(sharedBus.Init() == ESP_OK)
     {

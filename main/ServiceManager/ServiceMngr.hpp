@@ -7,11 +7,11 @@
 #ifdef CONFIG_DONE_COMPONENT_MATTER
 #include "MatterCoffeeMaker.hpp"
 #else
-#include "esp_netif.h"
-#include "protocol_examples_common.h"
+// #include "esp_netif.h"
+// #include "protocol_examples_common.h"
 #endif
 #ifdef CONFIG_DONE_LOG
-#include "Custom_Log.h"
+// #include "Custom_Log.h"
 #endif
 #ifdef CONFIG_DONE_COMPONENT_MQTT
 #include "MQTT_CoffeeMaker.hpp"
