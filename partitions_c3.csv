@@ -1,0 +1,9 @@
+# Name,             Type, SubType, Offset,     Size,       Flags
+nvs,                data, nvs,     ,     0x8000,
+otadata,            data, ota,     ,    0x2000,
+phy_init,           data, phy,     ,    0x1000,
+nvs_keys,           data, nvs_keys,,    0x1000,     encrypted
+esp_secure_cert,    0x3F,  ,       ,    0x2000,     encrypted
+fctry,              data, nvs,     ,    0x3000,
+storage,            data, spiffs,  ,    0x60000,
+ota_0,              app,  ota_0,   ,    0x200000,
