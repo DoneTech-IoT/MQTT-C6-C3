@@ -6,7 +6,8 @@
 #include "Singleton.hpp"
 #include "SpiffsManager.h"
 #include "WiFiConfig.h"
-
+#include "SharedBus.h"
+#include "esp_task_wdt.h"
 
 static const char* TAG = "ServiceMngr";
 TaskHandle_t ServiceMngr::SrvMngHandle = nullptr;
@@ -27,6 +28,20 @@ std::shared_ptr<MQTTCoffeeMaker> ServiceMngr::mqttCoffeeMakerApp;
 #include "esp_heap_caps.h"
 
 SemaphoreHandle_t IsWifiConnectedSemaphore = NULL;
+extern SharedBusPacket_t SharedBusPacket;
+static MatterEventPacket MatterEventPacketToSend;
+
+/**
+ * @brief Sends data on the shared bus
+ * @param DataToSend The data to be transmitted.
+ */
+void SendDataToBus(MatterEventPacket DataToSend)
+{
+    SharedBus::gPacket.SourceID = SharedBus::ServiceID::MATTER;
+    SharedBus::gPacket.PacketID = MATTER_EVENT_PACKET_ID;
+    memcpy(SharedBus::gPacket.data, &DataToSend, sizeof(DataToSend));
+    SharedBus::Send(SharedBus::gPacket); 
+}
 
 ServiceMngr::ServiceMngr(
     const char *TaskName,
@@ -38,7 +53,7 @@ ServiceMngr::ServiceMngr(
     nvsFlashInit();
 
     SpiffsInit();
-    WiFi_InitStation("xxxxx", "xxxxx", &IsWifiConnectedSemaphore);
+    WiFi_InitStation("Huma B1", "BB1@HumaCo", &IsWifiConnectedSemaphore);
 
     IsWifiConnectedSemaphore = xSemaphoreCreateBinary();
 
@@ -47,6 +62,7 @@ ServiceMngr::ServiceMngr(
         ESP_LOGE(TAG, "Failed to connect to Wi-Fi");
         // gpio_set_level(GPIO_LED_RED, RGB_LED_ON);
     }
+
     SharedBus sharedBus;
     if(sharedBus.Init() == ESP_OK)
     {
@@ -75,7 +91,8 @@ ServiceMngr::ServiceMngr(
     {
         ESP_LOGE(TAG,"failed to create %s service.",
             mServiceName[SharedBus::ServiceID::SERVICE_MANAGER]);
-    }        
+    }     
+    // esp_task_wdt_reset();   
 }
 
 ServiceMngr::~ServiceMngr()
@@ -144,7 +161,7 @@ esp_err_t ServiceMngr::OnMachineStateStart()
 
     if (err == ESP_OK)
     {
-        ESP_LOGI(TAG, "%s service created.",
+        ESP_LOGI(TAG, "%s service created.yoooo!",
                  mServiceName[SharedBus::ServiceID::MQTT]);
     }
     else
@@ -153,6 +170,10 @@ esp_err_t ServiceMngr::OnMachineStateStart()
                  mServiceName[SharedBus::ServiceID::MQTT]);
     }
 #endif // CONFIG_DONE_COMPONENT_MQTT
+
+    MatterEventPacketToSend.PublicEventTypes = 
+        PublicEventTypes::kInterfaceIpAddressChanged;
+    SendDataToBus(MatterEventPacketToSend);
 
     return err;
 }
